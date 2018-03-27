@@ -1,9 +1,10 @@
 <?php
 global $last_mtime;
 $last_mtime = time();
+echo "reload 1111::';;";
 swoole_timer_tick(2000, function () {
 
-    echo "reload";
+    echo "reload';;";
     reload(ROOT_DIR . '/app/');
     reload(ROOT_DIR . '/core/');
 });
