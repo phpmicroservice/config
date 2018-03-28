@@ -1,29 +1,35 @@
 <?php
 
 namespace core;
-
 /**
  * App类,主管应用的产生调度
- * @property \Phalcon\Logger\Adapter\File $logger
  */
 class App extends \Phalcon\Di\Injectable
 {
 
+
     /**
      * 应用初始化,进行配置初始话,配置依赖注入器
      */
-    public function init(\swoole_server $server, int $worker_id)
+    public function init(\swoole_server $server,$worker_id)
     {
-        # 配置初始化
-        $this->logger->info('demo_log',['dadq','sss']);
+       
     }
 
+    public static function task()
+    {
+
+    }
+
+    public static function finish(){
+
+    }
     /**
      * 产生链接的回调函数
      */
     public function connect(\swoole_server $server, int $fd, int $reactorId)
     {
-        echo "connect:" .$fd;
+        echo "\n connect: " .$fd;
 
     }
 
@@ -32,14 +38,18 @@ class App extends \Phalcon\Di\Injectable
      */
     public function receive(\swoole_server $server, int $fd, int $reactor_id, string $data)
     {
-        echo "receive:" . $fd;
+        echo "\n receive:" . $fd .'d:'.$data;
+        $router=new Router($server,$fd,$reactor_id,$data);
+        $router->handle($server,$fd,$reactor_id,$data);
     }
+
+
 
     /**
      * 链接关闭 的回调函数
      */
     public function close(\swoole_server $server, int $fd, int $reactorId)
     {
-        echo "close:" .$server ;
+        echo "\n close:"  .$fd;
     }
 }

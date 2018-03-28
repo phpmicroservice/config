@@ -81,7 +81,7 @@ class MysqlLog extends Adapter
             [
                 "content" => serialize($context),
                 "message" => $message,
-                "type" => $type,
+                "type37" => $type,
                 "time" => $time,
             ]
         );

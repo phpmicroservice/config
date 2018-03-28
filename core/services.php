@@ -15,7 +15,7 @@ use Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter;
 $loader = new \Phalcon\Loader();
 $loader->registerNamespaces(
     [
-        'apps'    => ROOT_DIR . '/./apps/',
+        'app'    => ROOT_DIR . '/./app/',
         'core'    => ROOT_DIR . '/./core/',
         'tool'    => ROOT_DIR . '/./tool/',
     ]
@@ -85,6 +85,7 @@ $di->setShared('logger', function () {
  * configuration file
  */
 $di["db"] = function () use($di) {
+    var_dump($di['config']->database);
     return new DbAdapter(
         [
             "host" => $di['config']->database->app_mysql_host,

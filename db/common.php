@@ -10,5 +10,5 @@ use Phalcon\Db\Column as Column;
 use Phalcon\Db\Index;
 
 return [
-    include 'z_1.php',include 'z_qqqq.php'
+   include 'log.php'
 ];

@@ -8,7 +8,9 @@ $loader->registerNamespaces(
         'core' => ROOT_DIR . '/core/',
     ]
 );
+include_once './core/services.php';
 $loader->register();
 # 进行数据库初始化
-$iuu=new \core\INU();
+$iuu=new \core\Dbcu();
 $iuu->testUpdate();
+echo "初始化完毕!";
