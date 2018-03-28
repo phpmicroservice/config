@@ -17,7 +17,7 @@ class Counnect
 
     public function __construct(\swoole_server $server, int $fd, int $reactor_id, string $data)
     {
-        echo "创建一个链接对象 \n";
+//        echo "创建一个链接对象 \n";
         $this->swoole_server = $server;
         $this->fd = $fd;
         $this->reactor_id = $reactor_id;
@@ -31,7 +31,7 @@ class Counnect
 
     public function send($data)
     {
-        $this->swoole_server->send($this->fd,serialize($data).PHP_EOL);
+        $this->swoole_server->send($this->fd,serialize($data).PACKAGE_EOF);
     }
 
 
@@ -42,7 +42,7 @@ class Counnect
 
     public function __destruct()
     {
-        echo "销毁一个链接对象 \n";
+//        echo "销毁一个链接对象 \n";
         // TODO: Implement __destruct() method.
     }
 }

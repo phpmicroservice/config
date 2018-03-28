@@ -22,7 +22,10 @@ class Server
         $this->server->set(array(
             'daemonize' => false,
             'worker_num' => 4,
-            'task_worker_num' => 10
+            'task_worker_num' => 10,
+            'reload_async' => true,
+            'open_eof_split' => true, //打开EOF检测
+            'package_eof' => PACKAGE_EOF, //设置EOF
         ));
         # 注册进程回调函数
         $this->workCall();
@@ -61,13 +64,12 @@ class Server
         $this->server->on('WorkerStart', function (\swoole_server $server, $worker_id) {
             echo "on WorkerStart \n";
             # 加载依赖注入器
-            include_once ROOT_DIR.'/core/services.php';
+            include_once ROOT_DIR . '/core/services.php';
             # 应用初始化
             $app = new \core\App();
             $app->init($server, $worker_id);
         });
     }
-
 
 
 }

@@ -29,7 +29,7 @@ class Router extends \Phalcon\Di\Injectable
     {
         $router_string = $this->connect->getRouter();
         $arr = explode('_', $router_string);
-        var_dump($arr);
+
         $controller_name = $arr[0];
         $action_name = $arr[1];
         $this->handleCall($controller_name, $action_name);
@@ -63,7 +63,7 @@ class Router extends \Phalcon\Di\Injectable
 
     public function __destruct()
     {
-        echo "销毁一个路由";
+//        echo "销毁一个路由";
         // TODO: Implement __destruct() method.
     }
 

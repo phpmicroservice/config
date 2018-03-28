@@ -14,6 +14,7 @@ class Fault extends \core\Controller
     public function controller()
     {
         $this->connect->send('不合法的控制器!');
+        $this->connect->send('不合法的控制器22!');
     }
 
     /**
