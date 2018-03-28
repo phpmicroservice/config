@@ -14,9 +14,7 @@ swoole_timer_tick(3000, function ($timer_id)use($server) {
  */
 function reload($dir,$server,$timer_id)
 {
-
     global $last_mtime;
-
     // recursive traversal directory
     $dir_iterator = new \RecursiveDirectoryIterator($dir);
     $iterator = new \RecursiveIteratorIterator($dir_iterator);

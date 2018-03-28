@@ -31,7 +31,7 @@ class Counnect
 
     public function send($data)
     {
-        $this->swoole_server->send($this->fd,serialize($data).PACKAGE_EOF);
+        $this->swoole_server->send($this->fd,\swoole_serialize::pack($data).PACKAGE_EOF);
     }
 
 

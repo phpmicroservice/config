@@ -68,7 +68,14 @@ class Server
             # 应用初始化
             $app = new \core\App();
             $app->init($server, $worker_id);
+
         });
+
+        $this->server->on('ManagerStart', function (\swoole_server $server, $worker_id) {
+            echo "on ManagerStart ManagerStart \n";
+        });
+
+
     }
 
 

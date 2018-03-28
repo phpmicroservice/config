@@ -5,7 +5,9 @@ echo "开始主程序! \n";
 include './tool/function.php';
 
 # 设置 常亮
-define('ROOT_DIR', __DIR__);
+define('ROOT_DIR', dirname(__DIR__));
+define('STTART_DIR', __DIR__);
+echo '项目目录为:'.ROOT_DIR.'启动文件目录为:'.STTART_DIR." \n";
 define("SERVICE_NAME", "CONFIG");# 设置服务名字
 define('RUNTIME_DIR',  './runtime/');# 运行目录
 define('CACHE_DIR',  './runtime/cache/');# 缓存目录
@@ -18,9 +20,9 @@ define('PACKAGE_EOF', '_pms_');
 $loader = new \Phalcon\Loader();
 $loader->registerNamespaces(
     [
-        'apps'    => ROOT_DIR . '/./apps/',
-        'core'    => ROOT_DIR . '/./core/',
-        'tool'    => ROOT_DIR . '/./tool/',
+        'apps'    => ROOT_DIR . '/apps/',
+        'core'    => ROOT_DIR . '/core/',
+        'tool'    => ROOT_DIR . '/tool/',
     ]
 );
 $loader->register();

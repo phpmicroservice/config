@@ -6,30 +6,42 @@ namespace core;
  */
 class App extends \Phalcon\Di\Injectable
 {
-
-
     /**
      * 应用初始化,进行配置初始话,配置依赖注入器
      */
-    public function init(\swoole_server $server,$worker_id)
-    {
-       
-    }
-
-    public static function task()
+    public function init(\swoole_server $server, $worker_id)
     {
 
+        echo  $server->taskworker." - taskworker \n";
+        # task 测试  5
+        require ROOT_DIR.'/start/filemonitor.php';
+
     }
 
-    public static function finish(){
+    public static function task(\swoole_server $server, int $task_id, int $src_worker_id, $data)
+    {
+        echo "  --task --".$data;
+
+        return 1;
 
     }
+
+    /**
+     * @param swoole_server $serv
+     * @param int $task_id
+     * @param string $data
+     */
+    public static function finish(swoole_server $server, int $task_id, string $data)
+    {
+
+    }
+
     /**
      * 产生链接的回调函数
      */
     public function connect(\swoole_server $server, int $fd, int $reactorId)
     {
-        echo "\n connect: " .$fd;
+        echo "\n connect: " . $fd;
 
 
     }
@@ -39,12 +51,11 @@ class App extends \Phalcon\Di\Injectable
      */
     public function receive(\swoole_server $server, int $fd, int $reactor_id, string $data)
     {
-        $data =rtrim($data,PACKAGE_EOF);
-        echo "\n receive:" . $fd .'d: '.var_export(\swoole_serialize::unpack($data),true)."  \n";
-        $router=new Router($server,$fd,$reactor_id,$data);
-        $router->handle($server,$fd,$reactor_id,$data);
+        $data = rtrim($data, PACKAGE_EOF);
+        echo "\n receive:" . $fd . 'd: ' . var_export(\swoole_serialize::unpack($data), true) . "  \n";
+        $router = new Router($server, $fd, $reactor_id, $data);
+        $router->handle($server, $fd, $reactor_id, $data);
     }
-
 
 
     /**
@@ -52,6 +63,6 @@ class App extends \Phalcon\Di\Injectable
      */
     public function close(\swoole_server $server, int $fd, int $reactorId)
     {
-        echo "\n close:"  .$fd;
+        echo "\n close:" . $fd;
     }
 }
