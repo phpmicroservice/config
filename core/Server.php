@@ -24,6 +24,7 @@ class Server
             'worker_num' => 4,
             'task_worker_num' => 10,
             'reload_async' => true,
+            #
             'open_eof_split' => true, //打开EOF检测
             'package_eof' => PACKAGE_EOF, //设置EOF
         ));
@@ -68,7 +69,6 @@ class Server
             # 应用初始化
             $app = new \core\App();
             $app->init($server, $worker_id);
-
         });
 
         $this->server->on('ManagerStart', function (\swoole_server $server, $worker_id) {
