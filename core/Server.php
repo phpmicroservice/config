@@ -11,27 +11,26 @@ class Server
 {
     private $server;
 
-    public function __construct()
+    /**
+     * 初始化
+     * Server constructor.
+     * @param $ip
+     * @param $port
+     * @param $mode
+     * @param $tcp
+     * @param array $option
+     */
+    public function __construct($ip, $port, $mode, $tcp, $option = [])
     {
 
-        $this->server = new \swoole_server('0.0.0.0', 9502, SWOOLE_BASE, SWOOLE_SOCK_TCP);
+        $this->server = new \swoole_server($ip, $port, $mode, $tcp);
 
         # 设置运行参数
-        $this->server->set(array(
-            'daemonize' => false,
-            'worker_num' => 4,
-            'task_worker_num' => 4,
-            'reload_async' => true,
-            #
-            'open_eof_split' => true, //打开EOF检测
-            'package_eof' => PACKAGE_EOF, //设置EOF
-        ));
+        $this->server->set($option);
         # 注册进程回调函数
         $this->workCall();
         # 注册链接回调函数
         $this->tcpCall();
-
-
     }
 
     /**
@@ -56,25 +55,73 @@ class Server
     {
 
         # 主进程启动
-        $this->server->on('Start', function ($server) {
-            echo "on Start \n";
-        });
-        # Work进行 启动
-        $this->server->on('WorkerStart', function (\swoole_server $server, $worker_id) {
-            echo "on WorkerStart \n";
-            # 加载依赖注入器
-            include_once ROOT_DIR . '/core/services.php';
-            # 应用初始化
-            $app = new \core\App();
-            $app->init($server, $worker_id);
-        });
+        $this->server->on('Start', [$this, 'onStart']);
+        # 正常关闭
+        $this->server->on('Shutdown', [$this, 'onShutdown']);
+        # Work/Task进程 启动
+        $this->server->on('WorkerStart', [$this, 'onWorkerStart']);
+        $this->server->on('WorkerStop', [$this, 'onWorkerStop']);
+        $this->server->on('WorkerExit', [$this, 'onWorkerExit']);
 
         $this->server->on('ManagerStart', function (\swoole_server $server, $worker_id) {
-            echo "on ManagerStart ManagerStart \n";
+            output('on ManagerStart ManagerStart');
         });
+    }
 
+    /**
+     * 主进程开始事件
+     * @param swoole_server $server
+     */
+    public function onStart(\Swoole\Server $server)
+    {
+        output('on Start');
+    }
+
+    /**
+     *
+     * 此事件在Worker进程/Task进程启动时发生。
+     * 这里创建的对象可以在进程生命周期内使用
+     */
+    public function onWorkerStart(\Swoole\Server $server, int $worker_id)
+    {
+        output('on WorkerStart');
+        # 加载依赖注入器
+        include_once ROOT_DIR . '/core/services.php';
+        # 应用初始化
+        $app = new \core\App();
+        $app->init($server, $worker_id);
+    }
+
+    /**
+     * 此事件在worker进程终止时发生
+     * @param \Swoole\Server $server
+     * @param int $worker_id
+     */
+    public function onWorkerStop(\Swoole\Server $server, int $worker_id)
+    {
 
     }
 
+    /**
+     * 仅在开启reload_async特性后有效。
+     * @param \Swoole\Server $server
+     * @param int $worker_id
+     */
+    public function onWorkerExit(\Swoole\Server $server, int $worker_id)
+    {
 
+    }
+
+    /**
+     * 此事件在Server正常结束时发生
+     */
+    public function onShutdown(\Swoole\Server $server)
+    {
+
+    }
+
+    public function WorkerStop()
+    {
+
+    }
 }

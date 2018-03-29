@@ -65,6 +65,19 @@ $di->setShared('filter', function() {
 //    $filter->add('json', new \core\Filter\JsonFilter());
     return $filter;
 });
+//事件管理器
+$di->setShared('eventsManager', function () {
+    $eventsManager = new \Phalcon\Events\Manager();
+    return $eventsManager;
+});
+
+
+//注册过滤器,添加了几个自定义过滤方法
+$di->setShared('filter', function () {
+    $filter = new \Phalcon\Filter();
+//    $filter->add('json', new \core\Filter\JsonFilter());
+    return $filter;
+});
 
 
 $di->set(
