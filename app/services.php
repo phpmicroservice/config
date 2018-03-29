@@ -2,7 +2,7 @@
 
 /**
  * Services are globally registered in this file
- * 服务的全局注册都这里
+ * 服务的全局注册都这里,依赖注入
  */
 use Phalcon\Mvc\Url as UrlResolver;
 use Phalcon\Mvc\Model\Manager as ModelsManager;
