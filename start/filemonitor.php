@@ -23,9 +23,9 @@ function reload($dir,$server,$timer_id)
             if(substr($file,-3)=='php'){
                 // only check php files
                 // check mtime
+                $last_mtime = time();
                 $getMTime = $file->getMTime();
                 if ($last_mtime < $getMTime) {
-                    swoole_timer_clear($timer_id);
                     echo $file . " ---|lasttime :$last_mtime and getMTime:$getMTime update and reload \n";
                     if(in_array($file,get_included_files())){
                         echo  "关闭系统!";

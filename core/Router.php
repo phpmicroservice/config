@@ -12,7 +12,7 @@ class Router extends \Phalcon\Di\Injectable
 {
     private $connect;
 
-    public function __construct(\swoole_server $server, int $fd, int $reactor_id, string $data)
+    public function __construct(\swoole_server $server, int $fd, int $reactor_id, array $data)
     {
         $this->connect = new Counnect($server, $fd, $reactor_id, $data);
     }
@@ -25,7 +25,7 @@ class Router extends \Phalcon\Di\Injectable
      * @param int $reactor_id
      * @param string $data
      */
-    public function handle(\swoole_server $server, int $fd, int $reactor_id, string $data)
+    public function handle(\swoole_server $server, int $fd, int $reactor_id, array $data)
     {
         $router_string = $this->connect->getRouter();
         $arr = explode('_', $router_string);
@@ -44,7 +44,8 @@ class Router extends \Phalcon\Di\Injectable
     private function handleCall($controller_name, $action_name)
     {
         $class_name = '\\app\\controller\\' . ucfirst($controller_name);
-        var_dump($class_name);
+
+        output($class_name, 'class_name');
         $faultcontroller = 'app\controller\Fault';
         if (class_exists($class_name)) {
             $controller = new $class_name($this->connect);

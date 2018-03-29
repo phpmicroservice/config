@@ -41,9 +41,7 @@ class App extends \Phalcon\Di\Injectable
      */
     public function connect(\swoole_server $server, int $fd, int $reactorId)
     {
-        echo "\n connect: " . $fd;
-
-
+        output([$fd, $reactorId], 'connect');
     }
 
     /**
@@ -51,8 +49,8 @@ class App extends \Phalcon\Di\Injectable
      */
     public function receive(\swoole_server $server, int $fd, int $reactor_id, string $data)
     {
-        $data = rtrim($data, PACKAGE_EOF);
-        echo "\n receive:" . $fd . 'd: ' . var_export(\swoole_serialize::unpack($data), true) . "  \n";
+        $data = \swoole_serialize::unpack(rtrim($data, PACKAGE_EOF));
+        output($data, 'receive');
         $router = new Router($server, $fd, $reactor_id, $data);
         $router->handle($server, $fd, $reactor_id, $data);
     }

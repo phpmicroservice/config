@@ -4,5 +4,6 @@
     "app_mysql_username":"dongyongsai",
     "app_mysql_password":"123.369",
     "app_mysql_dbname":"dys_register"
-  }
+  },
+  "secret": "PcfnZJxXRkmsCqJEYNdhC0FUFYauHYYA"
 }

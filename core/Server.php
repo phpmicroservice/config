@@ -1,14 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Dongasai
- * Date: 2018/3/28
- * Time: 16:19
- */
 
 namespace core;
 
-
+/**
+ * 服务启动
+ * Class Server
+ * @package core
+ */
 class Server
 {
     private $server;
@@ -22,7 +20,7 @@ class Server
         $this->server->set(array(
             'daemonize' => false,
             'worker_num' => 4,
-            'task_worker_num' => 10,
+            'task_worker_num' => 4,
             'reload_async' => true,
             #
             'open_eof_split' => true, //打开EOF检测
