@@ -1,6 +1,6 @@
 <?php
 
-namespace core;
+namespace pms;
 
 use Phalcon\Db\Column as Column;
 use Phalcon\Db\Index;

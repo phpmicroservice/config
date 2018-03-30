@@ -1,14 +1,16 @@
 <?php
 
-namespace core;
+namespace pms;
 
 use Phalcon\Events\ManagerInterface;
 
 /**
  * App类,主管应用的产生调度
  */
-class App extends Base implements \Phalcon\Events\EventsAwareInterface
+class App extends Base
 {
+
+
     /**
      * 应用初始化,进行配置初始话,配置依赖注入器
      */
@@ -19,23 +21,7 @@ class App extends Base implements \Phalcon\Events\EventsAwareInterface
     }
 
 
-    /**
-     * 设置事件管理器
-     * @param ManagerInterface $eventsManager
-     */
-    public function setEventsManager(ManagerInterface $eventsManager)
-    {
-        $this->eventsManager = $eventsManager;
-    }
 
-    /**
-     * 设置事件管理器
-     * @return  ManagerInterface $eventsManager
-     */
-    public function getEventsManager()
-    {
-        return $this->eventsManager;
-    }
 
 
     /**

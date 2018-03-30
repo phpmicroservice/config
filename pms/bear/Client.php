@@ -1,6 +1,6 @@
 <?php
 
-namespace core;
+namespace pms\bear;
 
 use Phalcon\Events\ManagerInterface;
 
@@ -10,9 +10,9 @@ use Phalcon\Events\ManagerInterface;
  * @property \swoole_client $swoole_client
  * @property-read \swoole_server $swoole_server
  * @event connect/receive_true(receive事件的效验版本已进行数据拆分)/error/close/bufferFull/bufferEmpty/beforeSend发送之前
- * @package core
+ * @package pms
  */
-class Client extends Base implements \Phalcon\Events\EventsAwareInterface
+class Client extends Base
 {
     public $swoole_client;
     private $swoole_server;
@@ -40,23 +40,6 @@ class Client extends Base implements \Phalcon\Events\EventsAwareInterface
         $this->get_swoole_client();
     }
 
-    /**
-     * 设置事件管理器
-     * @param ManagerInterface $eventsManager
-     */
-    public function setEventsManager(ManagerInterface $eventsManager)
-    {
-        $this->eventsManager = $eventsManager;
-    }
-
-    /**
-     * 设置事件管理器
-     * @return  ManagerInterface $eventsManager
-     */
-    public function getEventsManager()
-    {
-        return $this->eventsManager;
-    }
 
     /**
      * 判断链接

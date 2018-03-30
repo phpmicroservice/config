@@ -1,12 +1,12 @@
 <?php
 
-namespace core;
+namespace pms\bear;
 
 /**
  * 链接对象
  * Class Counnect
  * @property \swoole_server $swoole_server
- * @package core
+ * @package pms
  */
 class Counnect
 {
@@ -26,7 +26,6 @@ class Counnect
         if (isset($data['p'])) {
             $this->passing = $this->request['p'];
         }
-
     }
 
     /**

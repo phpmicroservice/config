@@ -1,23 +1,25 @@
 <?php
 
-namespace core;
+namespace pms;
 
 use Phalcon\Events\ManagerInterface;
 
 /**
  * 服务启动
  * Class Server
- * @property \core\Work $work;
- * @property \core\Task $task;
- * @property \core\App $app;
- * @package core
+ * @property \pms\Work $work;
+ * @property \pms\Task $task;
+ * @property \pms\App $app;
+ * @property \Swoole\Server $swoole_server;
+ * @package pms
  */
-class Server extends Base implements \Phalcon\Events\EventsAwareInterface
+class Server extends Base
 {
-    private $server;
+    private $swoole_server;
     private $task;
     private $work;
     private $app;
+    private $logo;
 
 
     /**
@@ -31,13 +33,13 @@ class Server extends Base implements \Phalcon\Events\EventsAwareInterface
      */
     public function __construct($ip, $port, $mode, $tcp, $option = [])
     {
-        $this->logo=require 'logo.php';
-        $this->server = new \swoole_server($ip, $port, $mode, $tcp);
+//        $this->logo = require 'logo.php';
+        $this->swoole_server = new \Swoole\Server($ip, $port, $mode, $tcp);
         # 设置运行参数
-        $this->server->set($option);
-        $this->task = new  Task();
-        $this->work = new Work();
-        $this->app = new App();
+        $this->swoole_server->set($option);
+        $this->task = new  Task($this->swoole_server);
+        $this->work = new Work($this->swoole_server);
+        $this->app = new App($this->swoole_server);
         # 注册进程回调函数
         $this->workCall();
         # 注册链接回调函数
@@ -49,30 +51,13 @@ class Server extends Base implements \Phalcon\Events\EventsAwareInterface
         $this->eventsManager->attach('pms_server', $handler);
     }
 
-    /**
-     * 设置事件管理器
-     * @param ManagerInterface $eventsManager
-     */
-    public function setEventsManager(ManagerInterface $eventsManager)
-    {
-        $this->eventsManager = $eventsManager;
-    }
-
-    /**
-     * 设置事件管理器
-     * @return  ManagerInterface $eventsManager
-     */
-    public function getEventsManager()
-    {
-        return $this->eventsManager;
-    }
 
     /**
      * 启动服务
      */
     public function start()
     {
-        $this->server->start();
+        $this->swoole_server->start();
     }
 
     /**
@@ -81,12 +66,12 @@ class Server extends Base implements \Phalcon\Events\EventsAwareInterface
     private function tcpCall()
     {
         # 设置连接回调
-        $this->server->on('Connect', [$this->app, 'onConnect']);
-        $this->server->on('Receive', [$this->app, 'onReceive']);
-        $this->server->on('Packet', [$this->app, 'onPacket']);
-        $this->server->on('Close', [$this->app, 'onClose']);
-        $this->server->on('BufferEmpty', [$this->app, 'onBufferEmpty']);
-        $this->server->on('BufferFull', [$this->app, 'onBufferFull']);
+        $this->swoole_server->on('Connect', [$this->app, 'onConnect']);
+        $this->swoole_server->on('Receive', [$this->app, 'onReceive']);
+        $this->swoole_server->on('Packet', [$this->app, 'onPacket']);
+        $this->swoole_server->on('Close', [$this->app, 'onClose']);
+        $this->swoole_server->on('BufferEmpty', [$this->app, 'onBufferEmpty']);
+        $this->swoole_server->on('BufferFull', [$this->app, 'onBufferFull']);
     }
 
     /**
@@ -95,26 +80,26 @@ class Server extends Base implements \Phalcon\Events\EventsAwareInterface
     private function workCall()
     {
 
-        $this->server->on('Task', [$this->task, 'onTask']);
-        $this->server->on('Finish', [$this->work, 'onFinish']);
+        $this->swoole_server->on('Task', [$this->task, 'onTask']);
+        $this->swoole_server->on('Finish', [$this->work, 'onFinish']);
         # 主进程启动
-        $this->server->on('Start', [$this, 'onStart']);
+        $this->swoole_server->on('Start', [$this, 'onStart']);
         # 正常关闭
-        $this->server->on('Shutdown', [$this, 'onShutdown']);
+        $this->swoole_server->on('Shutdown', [$this, 'onShutdown']);
         # Work/Task进程 启动
-        $this->server->on('WorkerStart', [$this, 'onWorkerStart']);
+        $this->swoole_server->on('WorkerStart', [$this, 'onWorkerStart']);
         # work进程停止
-        $this->server->on('WorkerStop', [$this->work, 'onWorkerStop']);
+        $this->swoole_server->on('WorkerStop', [$this->work, 'onWorkerStop']);
         # work 进程退出
-        $this->server->on('WorkerExit', [$this->work, 'onWorkerExit']);
+        $this->swoole_server->on('WorkerExit', [$this->work, 'onWorkerExit']);
         # 进程出错 work/task
-        $this->server->on('WorkerError', [$this, 'onWorkerError']);
+        $this->swoole_server->on('WorkerError', [$this, 'onWorkerError']);
         # 收到管道消息
-        $this->server->on('PipeMessage', [$this, 'onPipeMessage']);
+        $this->swoole_server->on('PipeMessage', [$this, 'onPipeMessage']);
         # 管理进程开启
-        $this->server->on('ManagerStart', [$this, 'onManagerStart']);
+        $this->swoole_server->on('ManagerStart', [$this, 'onManagerStart']);
         # 管理进程结束
-        $this->server->on('ManagerStop', [$this, 'onManagerStop']);
+        $this->swoole_server->on('ManagerStop', [$this, 'onManagerStop']);
     }
 
     /**
@@ -125,6 +110,7 @@ class Server extends Base implements \Phalcon\Events\EventsAwareInterface
     {
         echo $this->logo;
         output('onStart');
+        $this->eventsManager->fire('onStart', $this, $server);
     }
 
     /**
@@ -135,6 +121,7 @@ class Server extends Base implements \Phalcon\Events\EventsAwareInterface
     public function onWorkerStart(\Swoole\Server $server, int $worker_id)
     {
         output('on WorkerStart');
+        $this->eventsManager->fire('onWorkerStart', $this, $server);
         # 加载依赖注入器
         include_once ROOT_DIR . '/app/services.php';
         if ($server->taskworker) {
@@ -146,11 +133,10 @@ class Server extends Base implements \Phalcon\Events\EventsAwareInterface
         if ($worker_id == 1) {
             # 热更新
             global $last_mtime;
-            $last_mtime=time();
-            \swoole_timer_tick(3000, [$this, 'codeUpdata'], ROOT_DIR . '/core/');
+            $last_mtime = time();
+            \swoole_timer_tick(3000, [$this, 'codeUpdata'], ROOT_DIR . '/pms/');
             \swoole_timer_tick(3000, [$this, 'codeUpdata'], ROOT_DIR . '/app/');
-            \swoole_timer_tick(3000, [$this, 'codeUpdata'], ROOT_DIR . '/core/');
-
+            \swoole_timer_tick(3000, [$this, 'codeUpdata'], ROOT_DIR . '/pms/');
             # 应用初始化
             $this->app->init($server, $worker_id);
         }
@@ -177,7 +163,7 @@ class Server extends Base implements \Phalcon\Events\EventsAwareInterface
                     if ($last_mtime < $getMTime) {
                         echo $file . " ---|lasttime :$last_mtime and getMTime:$getMTime update and reload \n";
                         echo "关闭系统!自动重启!";
-                        $this->server->shutdown();
+                        $this->swoole_server->shutdown();
                         break;
                     }
                 }
@@ -191,8 +177,8 @@ class Server extends Base implements \Phalcon\Events\EventsAwareInterface
      */
     public function onShutdown(\Swoole\Server $server)
     {
-
         output('onShutdown');
+        $this->eventsManager->fire('onShutdown', $this, $server);
     }
 
     /**
@@ -203,6 +189,7 @@ class Server extends Base implements \Phalcon\Events\EventsAwareInterface
      */
     public function onPipeMessage(\Swoole\Server $server, int $src_worker_id, mixed $message)
     {
+        $this->eventsManager->fire('onPipeMessage', $this, [$src_worker_id, $message]);
         if ($server->taskworker) {
             $this->task->onPipeMessage($server, $src_worker_id, $message);
         } else {
@@ -220,6 +207,7 @@ class Server extends Base implements \Phalcon\Events\EventsAwareInterface
      */
     public function onWorkerError(\Swoole\Server $server, int $worker_id, int $worker_pid, int $exit_code, int $signal)
     {
+        return 1;
         if ($server->taskworker) {
             $this->task->onWorkerError($server, $worker_id, $worker_pid, $exit_code, $signal);
         } else {
@@ -235,6 +223,7 @@ class Server extends Base implements \Phalcon\Events\EventsAwareInterface
     public function onManagerStart(\Swoole\Server $server)
     {
         output('on ManagerStart');
+        $this->eventsManager->fire('onManagerStart', $this, $server);
     }
 
     /**
@@ -244,5 +233,6 @@ class Server extends Base implements \Phalcon\Events\EventsAwareInterface
     public function onManagerStop(\Swoole\Server $server)
     {
         output('on onManagerStop');
+        $this->eventsManager->fire('onManagerStop', $this, $server);
     }
 }

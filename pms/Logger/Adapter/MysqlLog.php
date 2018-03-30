@@ -1,6 +1,6 @@
 <?php
 
-namespace core;
+namespace pms;
 
 use Phalcon\Logger\Adapter;
 use Phalcon\Logger\Exception;
@@ -11,7 +11,7 @@ use Phalcon\Logger\Formatter\Line as LineFormatter;
  * 日志
  * Class Log
  * @author Dongasai <1514582970@qq.com>
- * @package core
+ * @package pms
  *<code>
  * $logger = new \Phalcon\Logger\Adapter\MysqlLog("log");
  *

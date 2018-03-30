@@ -1,6 +1,6 @@
 <?php
 
-namespace core;
+namespace pms;
 
 use Phalcon\Events\Event;
 
@@ -8,7 +8,7 @@ use Phalcon\Events\Event;
  * 配置初始化
  * Class Config
  * @property Client $config_client
- * @package core
+ * @package pms
  */
 class ConfigInit extends Base
 {

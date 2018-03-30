@@ -1,19 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: saisai
- * Date: 17-5-12
- * Time: 上午10:17
- */
 
-namespace core;
+namespace pms\Validation;
 
 /**
- * Class CoreValidator
- * @package core
- * @property \core\CoreValidation $_Validation
+ * 验证器
+ * Class pmsValidator
+ * @package pms
+ * @property \pms\pmsValidation $_Validation
  */
-class CoreValidator extends \Phalcon\Validation\Validator
+class Validator extends \Phalcon\Validation\Validator
 {
     protected $code = '';
     protected $type = '';

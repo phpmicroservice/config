@@ -1,14 +1,14 @@
 <?php
 
-namespace core;
+namespace pms;
 
 /**
  * 路由器
  * Class Router
- * @property \core\Counnect $connect
- * @package core
+ * @property \pms\Counnect $connect
+ * @package pms
  */
-class Router extends \Phalcon\Di\Injectable
+class Router extends Base
 {
     private $connect;
 

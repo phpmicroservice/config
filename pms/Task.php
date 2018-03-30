@@ -1,45 +1,27 @@
 <?php
 
-namespace core;
+namespace pms;
 
 use Phalcon\Events\ManagerInterface;
 
 /**
  * task进程事件
  * Class Task
- * @package core
+ * @package pms
  */
-class Task  extends Base  implements \Phalcon\Events\EventsAwareInterface
+class Task extends Base
 {
-
-    /**
-     * 设置事件管理器
-     * @param ManagerInterface $eventsManager
-     */
-    public function setEventsManager(ManagerInterface $eventsManager)
-    {
-        $this->eventsManager = $eventsManager;
-    }
-
-    /**
-     * 设置事件管理器
-     * @return  ManagerInterface $eventsManager
-     */
-    public function getEventsManager()
-    {
-        return $this->eventsManager;
-    }
-
     /**
      * 在task_worker进程内被调用
-     * @param \Swoole\Server $serv
+     * @param \Swoole\Server $server
      * @param int $task_id
      * @param int $src_worker_id
      * @param mixed $data
      */
-    public function onTask(\Swoole\Server $serv, int $task_id, int $src_worker_id, mixed $data)
+    public function onTask(\Swoole\Server $server, int $task_id, int $src_worker_id, mixed $data)
     {
-
+        output($data, 'onTask');
+        $this->eventsManager->fire('Task:onTask', $this, [$task_id, $src_worker_id, $data]);
     }
 
     /**
@@ -48,8 +30,10 @@ class Task  extends Base  implements \Phalcon\Events\EventsAwareInterface
      * @param int $src_worker_id
      * @param mixed $message
      */
-    public function onPipeMessage(\Swoole\Server $server, int $src_worker_id, mixed $message){
+    public function onPipeMessage(\Swoole\Server $server, int $src_worker_id, mixed $message)
+    {
         output('onPipeMessage in task:');
+        $this->eventsManager->fire('Task:onPipeMessage', $this, [$src_worker_id, $message]);
 
     }
 
@@ -62,6 +46,7 @@ class Task  extends Base  implements \Phalcon\Events\EventsAwareInterface
     public function onWorkerStart(\Swoole\Server $server, int $worker_id)
     {
         output('onWorkerStart in task');
+        $this->eventsManager->fire('Task:onWorkerStart', $this, $worker_id);
     }
 
     /**
@@ -75,5 +60,6 @@ class Task  extends Base  implements \Phalcon\Events\EventsAwareInterface
     public function onWorkerError(\Swoole\Server $server, int $worker_id, int $worker_pid, int $exit_code, int $signal)
     {
         output('task - onWorkerError');
+        return false;
     }
 }

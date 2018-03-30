@@ -1,10 +1,12 @@
 <?php
-namespace core;
+
+namespace pms;
 
 /**
+ * 控制器
  * Class Controller
- * @property \core\Counnect $connect
- * @package core
+ * @property \pms\Counnect $connect
+ * @package pms
  */
 class Controller extends \Phalcon\Di\Injectable
 {
