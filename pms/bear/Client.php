@@ -120,7 +120,38 @@ class Client extends Base
     public function send($data)
     {
         $this->eventsManager->fire($this->name . ":beforeSend", $this, $data);
-        $this->swoole_client->send(\swoole_serialize::pack($data) . PACKAGE_EOF);
+        $this->swoole_client->send($this->encode($data));
+    }
+
+    /**
+     * 发送并接受返回
+     * @param $data
+     */
+    public function send_recv($data)
+    {
+        $this->eventsManager->fire($this->name . ":beforeSend", $this, $data);
+        $this->swoole_client->send($this->encode($data));
+        $string = $this->swoole_client->recv();
+        return $this->decode($string);
+    }
+
+    /**
+     * 解码
+     * @param $string
+     */
+    private function decode($string): array
+    {
+        return \swoole_serialize::unpack($string);
+    }
+
+    /**
+     * 编码
+     * @param array $data
+     * @return string
+     */
+    private function encode(array $data): string
+    {
+        return \swoole_serialize::pack($data) . PACKAGE_EOF;
     }
 
 
@@ -136,25 +167,31 @@ class Client extends Base
 
 
     /**
-     * 收到值
+     * 收到值,真实
      * @param \swoole_client $cli
      * @param $data
      */
-    public function receive(\swoole_client $client, $data)
+    public function receive_true(\swoole_client $client, $data)
     {
+        $this->eventsManager->fire($this->name . ":receive_true", $this, $data);
+        output($data, 'client_receive_true');
         $data_arr = explode(PACKAGE_EOF, rtrim($data, PACKAGE_EOF));
         foreach ($data_arr as $value) {
-            $this->receive_true($value);
+            $this->receive($value);
         }
 
     }
 
 
-    private function receive_true($value)
+    /**
+     * 收到值,解码可用的
+     * @param $value
+     */
+    private function receive($value)
     {
-        $data = \swoole_serialize::unpack($value);
-        output($data, 'client_receive_true');
-        $this->eventsManager->fire($this->name . ":receive_true", $this, $value);
+        $data = $this->decode($value);
+        output($data, 'client_receive');
+        $this->eventsManager->fire($this->name . ":receive", $this, $data);
     }
 
     /**

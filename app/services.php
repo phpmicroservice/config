@@ -31,6 +31,11 @@ $loader->register();
  */
 $di = new Phalcon\DI\FactoryDefault();
 
+$di->setShared('dConfig', function () {
+    #Read configuration
+    $config = new Phalcon\Config(ROOT_DIR.'/config/config.php');
+    return $config;
+});
 
 $di->setShared('config', function () {
     #Read configuration

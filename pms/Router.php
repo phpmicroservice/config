@@ -12,9 +12,18 @@ class Router extends Base
 {
     private $connect;
 
+    /**
+     * 构造函数
+     * Router constructor.
+     * @param \swoole_server $server
+     * @param int $fd
+     * @param int $reactor_id
+     * @param array $data
+     */
     public function __construct(\swoole_server $server, int $fd, int $reactor_id, array $data)
     {
-        $this->connect = new Counnect($server, $fd, $reactor_id, $data);
+        $this->eventsManager->fire('router:construct', $this, [$fd, $reactor_id, $data]);
+        $this->connect = new bear\Counnect($server, $fd, $reactor_id, $data);
     }
 
 
@@ -28,11 +37,19 @@ class Router extends Base
     public function handle(\swoole_server $server, int $fd, int $reactor_id, array $data)
     {
         $router_string = $this->connect->getRouter();
-        $arr = explode('_', $router_string);
+        $arr = $this->analysis($router_string);
+        $this->handleCall($arr[0], $arr[1]);
+    }
 
-        $controller_name = $arr[0];
-        $action_name = $arr[1];
-        $this->handleCall($controller_name, $action_name);
+    /**
+     * 解析路由
+     * @param $router_string
+     */
+    public function analysis($router_string): array
+    {
+        $arr = explode('_', $router_string);
+        $this->eventsManager->fire('router:analysis', $this, $arr);
+        return $arr;
     }
 
 
@@ -43,8 +60,11 @@ class Router extends Base
      */
     private function handleCall($controller_name, $action_name)
     {
-        $class_name = '\\app\\controller\\' . ucfirst($controller_name);
 
+        if ($this->eventsManager->fire('router:analysis', $this, [$controller_name, $action_name],true) === false) {
+            return 1;
+        }
+        $class_name = '\\app\\controller\\' . ucfirst($controller_name);
         output($class_name, 'class_name');
         $faultcontroller = 'app\controller\Fault';
         if (class_exists($class_name)) {
@@ -62,6 +82,9 @@ class Router extends Base
     }
 
 
+    /**
+     * 销毁
+     */
     public function __destruct()
     {
 //        echo "销毁一个路由";
