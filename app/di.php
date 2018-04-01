@@ -33,7 +33,7 @@ $di = new Phalcon\DI\FactoryDefault();
 
 $di->setShared('dConfig', function () {
     #Read configuration
-    $config = new Phalcon\Config(ROOT_DIR.'/config/config.php');
+    $config = new Phalcon\Config(require ROOT_DIR.'/config/config.php');
     return $config;
 });
 

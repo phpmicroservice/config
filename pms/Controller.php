@@ -2,10 +2,11 @@
 
 namespace pms;
 
+use \pms\bear\Counnect;
 /**
  * 控制器
  * Class Controller
- * @property \pms\Counnect $connect
+ * @property \pms\bear\Counnect $connect
  * @package pms
  */
 class Controller extends \Phalcon\Di\Injectable

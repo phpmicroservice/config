@@ -5,12 +5,13 @@ namespace pms;
 /**
  * 路由器
  * Class Router
- * @property \pms\Counnect $connect
+ * @property \pms\bear\Counnect $connect
  * @package pms
  */
 class Router extends Base
 {
     private $connect;
+    protected $name='Router';
 
     /**
      * 构造函数
@@ -22,7 +23,7 @@ class Router extends Base
      */
     public function __construct(\swoole_server $server, int $fd, int $reactor_id, array $data)
     {
-        $this->eventsManager->fire('router:construct', $this, [$fd, $reactor_id, $data]);
+        $this->eventsManager->fire($this->name.':construct', $this, [$fd, $reactor_id, $data]);
         $this->connect = new bear\Counnect($server, $fd, $reactor_id, $data);
     }
 
@@ -45,12 +46,27 @@ class Router extends Base
      * 解析路由
      * @param $router_string
      */
-    public function analysis($router_string): array
+    private function analysis(string $router_string): array
     {
-        $arr = explode('_', $router_string);
-        $this->eventsManager->fire('router:analysis', $this, $arr);
+        $arr = explode('_', $this->map($router_string));
+        $this->eventsManager->fire($this->name.':analysis', $this, $arr);
         return $arr;
     }
+
+    /**
+     * 映射处理
+     * @param string $router_string
+     * @return string
+     */
+    private function map(string $router_string):string
+    {
+        $map=$this->dConfig->router;
+        if(isset($map[$router_string])){
+            return $map[$router_string];
+        }
+        return $router_string;
+    }
+
 
 
     /**
@@ -60,9 +76,12 @@ class Router extends Base
      */
     private function handleCall($controller_name, $action_name)
     {
-
-        if ($this->eventsManager->fire('router:analysis', $this, [$controller_name, $action_name],true) === false) {
+        if ($this->eventsManager->fire($this->name.':handleCall', $this, [$controller_name, $action_name],true) === false) {
             return 1;
+        }
+
+        if(!$this->dConfig['ready']){
+            return $this->connect->send_error('服务未完成初始化',[],503);
         }
         $class_name = '\\app\\controller\\' . ucfirst($controller_name);
         output($class_name, 'class_name');

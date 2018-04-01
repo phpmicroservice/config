@@ -2,7 +2,6 @@
 
 namespace pms;
 
-use Phalcon\Events\ManagerInterface;
 
 /**
  * task进程事件
@@ -11,6 +10,8 @@ use Phalcon\Events\ManagerInterface;
  */
 class Task extends Base
 {
+    protected $name='Task';
+
     /**
      * 在task_worker进程内被调用
      * @param \Swoole\Server $server
@@ -21,7 +22,7 @@ class Task extends Base
     public function onTask(\Swoole\Server $server, int $task_id, int $src_worker_id, mixed $data)
     {
         output($data, 'onTask');
-        $this->eventsManager->fire('Task:onTask', $this, [$task_id, $src_worker_id, $data]);
+        $this->eventsManager->fire($this->name.':onTask', $this, [$task_id, $src_worker_id, $data]);
     }
 
     /**
@@ -33,7 +34,7 @@ class Task extends Base
     public function onPipeMessage(\Swoole\Server $server, int $src_worker_id, mixed $message)
     {
         output('onPipeMessage in task:');
-        $this->eventsManager->fire('Task:onPipeMessage', $this, [$src_worker_id, $message]);
+        $this->eventsManager->fire($this->name.':onPipeMessage', $this, [$src_worker_id, $message]);
 
     }
 
@@ -46,7 +47,7 @@ class Task extends Base
     public function onWorkerStart(\Swoole\Server $server, int $worker_id)
     {
         output('onWorkerStart in task');
-        $this->eventsManager->fire('Task:onWorkerStart', $this, $worker_id);
+        $this->eventsManager->fire($this->name.':onWorkerStart', $this, $worker_id);
     }
 
     /**

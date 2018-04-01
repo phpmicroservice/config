@@ -10,19 +10,18 @@ use Phalcon\Events\ManagerInterface;
 class App extends Base
 {
 
+    private $config_init;
+    protected $name = 'App';
 
-    /**
-     * 应用初始化,进行配置初始话,配置依赖注入器
-     */
-    public function init(\swoole_server $server, $worker_id)
+    public function init(\Swoole\Server $server)
     {
-        # task 测试  5
+        if ($this->dConfig->config_init) {
+            # 需要配置初始化
+            $this->config_init = new ConfigInit($server);
+            $this->config_init->update();
+        }
 
     }
-
-
-
-
 
     /**
      * 产生链接的回调函数
@@ -30,6 +29,7 @@ class App extends Base
     public function onConnect(\Swoole\Server $server, int $fd, int $reactorId)
     {
         output([$fd, $reactorId], 'connect');
+        $this->eventsManager->fire($this->name . ":onConnect", $this, [$fd, $reactorId]);
     }
 
     /**
@@ -37,7 +37,45 @@ class App extends Base
      */
     public function onReceive(\Swoole\Server $server, int $fd, int $reactor_id, string $data)
     {
-        $data = \swoole_serialize::unpack(rtrim($data, PACKAGE_EOF));
+        $this->eventsManager->fire($this->name . ":onReceive", $this, [$fd, $reactor_id, $data]);
+        output($data, 'onReceive');
+        $data_arr = explode(PACKAGE_EOF, rtrim($data, PACKAGE_EOF));
+        foreach ($data_arr as $value) {
+            $this->receive($server, $fd, $reactor_id, $value);
+        }
+
+    }
+
+    /**
+     * 解码
+     * @param $string
+     */
+    private function decode($string): array
+    {
+        return \swoole_serialize::unpack(rtrim($string, PACKAGE_EOF));
+    }
+
+    /**
+     * 编码
+     * @param array $data
+     * @return string
+     */
+    private function encode(array $data): string
+    {
+        return \swoole_serialize::pack($data) . PACKAGE_EOF;
+    }
+
+    /**
+     * 数据接受的回调,信息已经处理
+     * @param $server
+     * @param $fd
+     * @param $reactor_id
+     * @param $data
+     */
+    private function receive($server, $fd, $reactor_id, $string)
+    {
+        $this->eventsManager->fire($this->name . ":receive", $this, [$fd, $reactor_id, $string]);
+        $data = $this->decode($string);
         output($data, 'receive');
         $router = new Router($server, $fd, $reactor_id, $data);
         $router->handle($server, $fd, $reactor_id, $data);
@@ -51,7 +89,7 @@ class App extends Base
      */
     public function onPacket(\Swoole\Server $server, string $data, array $client_info)
     {
-
+        $this->eventsManager->fire($this->name . ":onPacket", $this, [$data,$client_info]);
     }
 
 
@@ -60,9 +98,9 @@ class App extends Base
      * @param \Swoole\Server $serv
      * @param int $fd
      */
-    public function onBufferFull(\Swoole\Server $serv, int $fd)
+    public function onBufferFull(\Swoole\Server $server, int $fd)
     {
-
+        $this->eventsManager->fire($this->name . ":onBufferFull", $this, $fd);
     }
 
     /**
@@ -70,9 +108,9 @@ class App extends Base
      * @param \Swoole\Server $serv
      * @param int $fd
      */
-    public function onBufferEmpty(\Swoole\Server $serv, int $fd)
+    public function onBufferEmpty(\Swoole\Server $server, int $fd)
     {
-
+        $this->eventsManager->fire($this->name . ":onBufferEmpty", $this, $fd);
     }
 
 
@@ -82,8 +120,10 @@ class App extends Base
      * @param int $fd
      * @param int $reactorId
      */
-    public function onClose(\Swoole\Server $server, int $fd, int $reactorId)
+    public function onClose(\Swoole\Server $server, int $fd, int $reactor_id)
     {
-       output([$fd,$reactorId],'close');
+        output([$fd, $reactor_id], 'close');
+        $this->eventsManager->fire($this->name . ":onClose", $this, [$fd, $reactor_id]);
+
     }
 }

@@ -12,17 +12,17 @@ use Phalcon\Events\ManagerInterface;
  * @event connect/receive_true(receive事件的效验版本已进行数据拆分)/error/close/bufferFull/bufferEmpty/beforeSend发送之前
  * @package pms
  */
-class Client extends Base
+class Client extends \pms\Base
 {
     public $swoole_client;
-    private $swoole_server;
+    protected $swoole_server;
     private $server_ip;
     private $server_port;
     private $option = [
         'open_eof_check' => true, //打开EOF检测
         'package_eof' => PACKAGE_EOF, //设置EOF
     ];
-    private $name = 'Client';
+    protected $name = 'Client';
 
     /**
      * 配置初始化
@@ -54,10 +54,10 @@ class Client extends Base
     /**
      * 开始,链接服务器
      */
-    public function start()
+    public function start($timeout =3)
     {
         if (!$this->swoole_client->isConnected()) {
-            return $this->swoole_client->connect($this->server_ip, $this->server_port);
+            return $this->swoole_client->connect($this->server_ip, $this->server_port,$timeout);
         }
         return true;
 
@@ -81,7 +81,7 @@ class Client extends Base
         $this->swoole_client->set($this->option);
 
         $this->swoole_client->on("connect", [$this, 'connect']);
-        $this->swoole_client->on("receive", [$this, 'receive']);
+        $this->swoole_client->on("receive", [$this, 'receive_true']);
         $this->swoole_client->on("error", [$this, 'error']);
         $this->swoole_client->on("close", [$this, 'close']);
         $this->swoole_client->on("bufferFull", [$this, 'bufferFull']);
@@ -124,14 +124,29 @@ class Client extends Base
     }
 
     /**
+     * 发送一个请求
+     * @param $router
+     * @param $data
+     * @return bool
+     */
+    public function send_ask($router,$data)
+    {
+        return $this->send( [
+            'r' => $router,
+            'd' => $data
+        ]);
+    }
+
+    /**
      * 发送并接受返回
      * @param $data
      */
     public function send_recv($data)
     {
-        $this->eventsManager->fire($this->name . ":beforeSend", $this, $data);
-        $this->swoole_client->send($this->encode($data));
+        $this->send($data);
         $string = $this->swoole_client->recv();
+        output($string,'send_recv');
+        output($this->swoole_client->errCode,'send_recv_e');
         return $this->decode($string);
     }
 
@@ -141,7 +156,7 @@ class Client extends Base
      */
     private function decode($string): array
     {
-        return \swoole_serialize::unpack($string);
+        return \swoole_serialize::unpack(rtrim($string, PACKAGE_EOF));
     }
 
     /**
@@ -174,7 +189,7 @@ class Client extends Base
     public function receive_true(\swoole_client $client, $data)
     {
         $this->eventsManager->fire($this->name . ":receive_true", $this, $data);
-        output($data, 'client_receive_true');
+        output('内容就不展示了', 'client_receive_true');
         $data_arr = explode(PACKAGE_EOF, rtrim($data, PACKAGE_EOF));
         foreach ($data_arr as $value) {
             $this->receive($value);
@@ -190,7 +205,7 @@ class Client extends Base
     private function receive($value)
     {
         $data = $this->decode($value);
-        output($data, 'client_receive');
+        output('这是内容', 'client_receive');
         $this->eventsManager->fire($this->name . ":receive", $this, $data);
     }
 

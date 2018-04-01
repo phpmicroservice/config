@@ -15,6 +15,7 @@ class Counnect
     private $fd;
     private $reactor_id;
     private $passing = false;
+    protected $name = 'Counnect';
 
     public function __construct(\swoole_server $server, int $fd, int $reactor_id, array $data)
     {
@@ -64,6 +65,20 @@ class Counnect
             'e' => $e
         ];
         return $this->send($data);
+    }
+
+    /**
+     * 发送一个请求
+     * @param $router
+     * @param $data
+     * @return bool
+     */
+    public function send_ask($router,$data)
+    {
+        return $this->send( [
+            'r' => $router,
+            'd' => $data
+        ]);
     }
 
     /**

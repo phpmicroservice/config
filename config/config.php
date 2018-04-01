@@ -10,5 +10,7 @@ return [
         'map'=>[
             'mapdemo-demo'=>'demo-mapdemo'
         ]
-    ]
+    ],
+    'ready'=>false,
+    'config_init'=>true,
 ];
