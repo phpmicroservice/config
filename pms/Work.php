@@ -2,8 +2,6 @@
 
 namespace pms;
 
-
-
 /**
  * work进程
  * Class Work
@@ -12,6 +10,7 @@ namespace pms;
 class Work extends Base
 {
 
+    protected $name='Work';
     /**
      * task_worker中完成时,触发
      * @param swoole_server $serv
@@ -21,7 +20,7 @@ class Work extends Base
     public function onFinish(\Swoole\Server $server, int $task_id, string $data)
     {
         output([$task_id, $data], 'onFinish');
-        $this->eventsManager->fire('onFinish', $this, [$task_id, $data]);
+        $this->eventsManager->fire($this->name.':onFinish', $this, [$task_id, $data]);
     }
 
     /**
@@ -33,7 +32,7 @@ class Work extends Base
     public function onPipeMessage(\Swoole\Server $server, int $src_worker_id, mixed $message)
     {
         output([$src_worker_id, $message], 'onFinish');
-        $this->eventsManager->fire('onFinish', $this, [$src_worker_id, $message]);
+        $this->eventsManager->fire($this->name.':onPipeMessage', $this, [$src_worker_id, $message]);
     }
 
 
@@ -46,7 +45,7 @@ class Work extends Base
     public function onWorkerStart(\Swoole\Server $server, int $worker_id)
     {
         output($worker_id, 'onWorkerStart');
-        $this->eventsManager->fire('onFinish', $this, $worker_id);
+        $this->eventsManager->fire($this->name.':onWorkerStart', $this, $worker_id);
     }
 
     /**
@@ -56,7 +55,7 @@ class Work extends Base
      */
     public function onWorkerStop(\Swoole\Server $server, int $worker_id)
     {
-        $this->eventsManager->fire('onWorkerStop', $this, $worker_id);
+        $this->eventsManager->fire($this->name.':onWorkerStop', $this, $worker_id);
     }
 
     /**
@@ -80,7 +79,7 @@ class Work extends Base
      */
     public function onWorkerExit(\Swoole\Server $server, int $worker_id)
     {
-        $this->eventsManager->fire('onWorkerExit', $this, $worker_id);
+        $this->eventsManager->fire($this->name.':onWorkerExit', $this, $worker_id);
     }
 
 

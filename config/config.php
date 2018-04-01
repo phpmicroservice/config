@@ -10,5 +10,6 @@ return [
         'map'=>[
             'mapdemo-demo'=>'demo-mapdemo'
         ]
-    ]
+    ],
+    'ready'=>false
 ];

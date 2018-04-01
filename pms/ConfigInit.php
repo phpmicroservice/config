@@ -7,12 +7,12 @@ use Phalcon\Events\Event;
 /**
  * 配置初始化
  * Class Config
- * @property Client $config_client
+ * @property \pms\bear\Client $config_client
  * @package pms
  */
 class ConfigInit extends Base
 {
-    private $swoole_server;
+    protected $swoole_server;
     private $config_client;
     private $config_ip;
     private $config_port;
@@ -20,16 +20,15 @@ class ConfigInit extends Base
     /**
      * 配置初始化
      */
-    public function __construct(\swoole_server $server)
+    public function __construct(\Swoole\Server $server)
     {
         $this->config_ip = get_env('CONFIG_ADDRESS', 'pms_config');
         $this->config_port = get_env('CONFIG_PORT', '9502');
         $this->swoole_server = $server;
-        $this->config_client = new Client($server, $this->config_ip, $this->config_port);
-        $this->config_client->on();
-        $this->config_client->start();
-
+        $this->config_client = new bear\Client($server, $this->config_ip, $this->config_port);
+        $this->config_client->onBind('receive',$this);
         $ConfigInit = $this;
+
         swoole_timer_tick(5000, function ($timeid) use ($ConfigInit, $server) {
             output('swoole_timer_tick');
             # 没有初始化完毕
@@ -53,10 +52,10 @@ class ConfigInit extends Base
      * 发送数据
      * @param $data
      */
-    public function send($data)
+    public function send($router, $data)
     {
         if ($this->config_client->isConnected()) {
-            $this->config_client->send($data);
+            return $this->config_client->send_ask($router,$data);
         } else {
             $this->config_client->start();
         }
@@ -82,24 +81,13 @@ class ConfigInit extends Base
      * @param $value
      * @return int
      */
-    public function receive_true(Event $event, Client $Client, $value)
+    public function receive(Event $event, bear\Client $Client, $data)
     {
-        output($value, 'receive_true1111111');
-        return 1;
-        $data = \swoole_serialize::unpack($data);
-        output($data, 'receive_true');
+//        output($data, 'receive_configinit');
         $error = $data['e'] ?? 0;
         if (!$error) {
             #没有错误 config_init config_md5 config_data
-            $config = $data['d'];
-            if ($this->cache->get('config_md5') != \tool\Arr::array_md5($config)) {
-                # 存在更新 更新hash
-                $this->cache->save('config_md5', \tool\Arr::array_md5($config));
-                # 更新配置信息
-                $this->cache->save('config_data', $config);
-                self::updata_cache();
-            }
-
+            $this->save($data);
         } else {
             # 出现了错误!
             output([$data], 'error');
@@ -107,18 +95,19 @@ class ConfigInit extends Base
     }
 
     /**
-     * 链接出错的
-     * @param \swoole_client $cli
+     * 保存
+     * @param $data
      */
-    public function error(Event $event, Client $Client)
+    private function save($data)
     {
-        output('config server error');
-
-    }
-
-    public function close(Event $event, Client $Client)
-    {
-        output('config server close');
+        $config = $data['d'];
+        if ($this->cache->get('config_md5') != \tool\Arr::array_md5($config)) {
+            # 存在更新 更新hash
+            $this->cache->save('config_md5', \tool\Arr::array_md5($config));
+            # 更新配置信息
+            $this->cache->save('config_data', $config);
+            self::updata_cache();
+        }
     }
 
 
@@ -128,13 +117,13 @@ class ConfigInit extends Base
     public function update()
     {
         output('ConfigInit update ...');
-        $this->send([
-            'r' => 'config_acquire',
-            'd' => [
+        $this->send(
+            'config_acquire',
+            [
                 'n' => "register",
                 'k' => $this->get_key()
             ]
-        ]);
+        );
     }
 
     /**

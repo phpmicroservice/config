@@ -4,7 +4,7 @@ namespace app\controller;
 /**
  * 配置处理
  */
-class Config extends \core\Controller
+class Config extends \pms\Controller
 {
 
     /**
@@ -57,7 +57,7 @@ class Config extends \core\Controller
      */
     protected function validator($key, $name, $key2)
     {
-        $key_new = md5(md5(CONFIG_SECRET_KEY) . md5($key) . md5($name));
+        $key_new = md5(md5(APP_SECRET_KEY) . md5($key) . md5($name));
         output([$key_new, $key2], 'hash_equals');
         if (hash_equals($key_new, $key2)) {
             return true;

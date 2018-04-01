@@ -15,11 +15,12 @@ use Phalcon\Events\ManagerInterface;
  */
 class Server extends Base
 {
-    private $swoole_server;
+    protected $swoole_server;
     private $task;
     private $work;
     private $app;
     private $logo;
+    protected $name='Server';
 
 
     /**
@@ -34,7 +35,10 @@ class Server extends Base
     public function __construct($ip, $port, $mode, $tcp, $option = [])
     {
 //        $this->logo = require 'logo.php';
+        # 加载依赖注入
+        require ROOT_DIR.'/app/di.php';
         $this->swoole_server = new \Swoole\Server($ip, $port, $mode, $tcp);
+        parent::__construct( $this->swoole_server);
         # 设置运行参数
         $this->swoole_server->set($option);
         $this->task = new  Task($this->swoole_server);
@@ -46,10 +50,6 @@ class Server extends Base
         $this->tcpCall();
     }
 
-    public function on($handler)
-    {
-        $this->eventsManager->attach('pms_server', $handler);
-    }
 
 
     /**
@@ -110,7 +110,7 @@ class Server extends Base
     {
         echo $this->logo;
         output('onStart');
-        $this->eventsManager->fire('onStart', $this, $server);
+        $this->eventsManager->fire($this->name.':onStart', $this, $server);
     }
 
     /**
@@ -120,10 +120,13 @@ class Server extends Base
      */
     public function onWorkerStart(\Swoole\Server $server, int $worker_id)
     {
-        output('on WorkerStart');
-        $this->eventsManager->fire('onWorkerStart', $this, $server);
+        output('WorkerStart','onWorkerStart');
         # 加载依赖注入器
-        include_once ROOT_DIR . '/app/services.php';
+        include_once ROOT_DIR . '/app/di.php';
+        # 加载辅助函数库
+        include_once ROOT_DIR . '/tool/function.php';
+
+        $this->eventsManager->fire($this->name.':onWorkerStart', $this, $server);
         if ($server->taskworker) {
             #task
             $this->task->onWorkerStart($server, $worker_id);
@@ -134,22 +137,25 @@ class Server extends Base
             # 热更新
             global $last_mtime;
             $last_mtime = time();
-            \swoole_timer_tick(3000, [$this, 'codeUpdata'], ROOT_DIR . '/pms/');
+            \swoole_timer_tick(3000, [$this, 'codeUpdata'], ROOT_DIR . '/tool/');
             \swoole_timer_tick(3000, [$this, 'codeUpdata'], ROOT_DIR . '/app/');
             \swoole_timer_tick(3000, [$this, 'codeUpdata'], ROOT_DIR . '/pms/');
+            \swoole_timer_tick(3000, [$this, 'codeUpdata'], ROOT_DIR . '/start/');
             # 应用初始化
             $this->app->init($server, $worker_id);
         }
     }
 
 
+
     /**
      * 重新加载
      * @param $dir
      */
-    public function codeUpdata($dir)
+    public function codeUpdata($timer_id,$dir)
     {
         global $last_mtime;
+//        output([$last_mtime,$dir],'codeUpdata');
         // recursive traversal directory
         $dir_iterator = new \RecursiveDirectoryIterator($dir);
         $iterator = new \RecursiveIteratorIterator($dir_iterator);
@@ -158,9 +164,9 @@ class Server extends Base
                 if (substr($file, -3) == 'php') {
                     // 只检查php文件
                     // 检查时间
-                    $last_mtime = time();
                     $getMTime = $file->getMTime();
                     if ($last_mtime < $getMTime) {
+                        $last_mtime = time();
                         echo $file . " ---|lasttime :$last_mtime and getMTime:$getMTime update and reload \n";
                         echo "关闭系统!自动重启!";
                         $this->swoole_server->shutdown();
@@ -178,7 +184,7 @@ class Server extends Base
     public function onShutdown(\Swoole\Server $server)
     {
         output('onShutdown');
-        $this->eventsManager->fire('onShutdown', $this, $server);
+        $this->eventsManager->fire($this->name.':onShutdown', $this, $server);
     }
 
     /**
@@ -189,7 +195,7 @@ class Server extends Base
      */
     public function onPipeMessage(\Swoole\Server $server, int $src_worker_id, mixed $message)
     {
-        $this->eventsManager->fire('onPipeMessage', $this, [$src_worker_id, $message]);
+        $this->eventsManager->fire($this->name.':onPipeMessage', $this, [$src_worker_id, $message]);
         if ($server->taskworker) {
             $this->task->onPipeMessage($server, $src_worker_id, $message);
         } else {
@@ -223,7 +229,7 @@ class Server extends Base
     public function onManagerStart(\Swoole\Server $server)
     {
         output('on ManagerStart');
-        $this->eventsManager->fire('onManagerStart', $this, $server);
+        $this->eventsManager->fire($this->name.':onManagerStart', $this, $server);
     }
 
     /**
@@ -233,6 +239,6 @@ class Server extends Base
     public function onManagerStop(\Swoole\Server $server)
     {
         output('on onManagerStop');
-        $this->eventsManager->fire('onManagerStop', $this, $server);
+        $this->eventsManager->fire($this->name.':onManagerStop', $this, $server);
     }
 }
