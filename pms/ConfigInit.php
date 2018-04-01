@@ -30,7 +30,6 @@ class ConfigInit extends Base
         $ConfigInit = $this;
 
         swoole_timer_tick(5000, function ($timeid) use ($ConfigInit, $server) {
-            output('swoole_timer_tick');
             # 没有初始化完毕
             $ConfigInit->update();
         });
