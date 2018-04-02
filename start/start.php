@@ -1,11 +1,12 @@
 <?php
-//include './logo.php';
 echo "开始主程序! \n";
 define("SERVICE_NAME", "CONFIG");# 设置服务名字
 include __DIR__.'/../pms/index.php';
 # 进行一些项目配置
 define('APP_SECRET_KEY', get_env("APP_SECRET_KEY"));
-
+define('REGISTER_SECRET_KEY', get_env("REGISTER_SECRET_KEY"));
+define('REGISTER_ADDRESS', get_env("REGISTER_ADDRESS"));
+define('REGISTER_PORT', get_env("REGISTER_PORT"));
 
 
 //注册自动加载

@@ -11,5 +11,7 @@ return [
             'mapdemo-demo'=>'demo-mapdemo'
         ]
     ],
+    'config_init' => false,
+    'server_reg' => true,
     'ready'=>false
 ];
