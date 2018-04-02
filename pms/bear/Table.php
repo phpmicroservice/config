@@ -5,7 +5,7 @@ namespace pms\bear;
 
 abstract class Table
 {
-    protected $size = 65536;#2��13�η�
+    protected $size = 65536;#2的13次方
     protected $column = [
         ''
     ];
@@ -13,7 +13,7 @@ abstract class Table
 
 
     /**
-     * ���ʵ����
+     * 表的实例化
      * Table constructor.
      */
     public function __construct()
@@ -27,7 +27,7 @@ abstract class Table
     }
 
     /**
-     * ����
+     * 设置
      * @param string $key
      * @param array $value
      */
@@ -37,7 +37,7 @@ abstract class Table
     }
 
     /**
-     * ԭ������������
+     * 原子自增操作。
      * @param string $key
      * @param string $column
      * @param int $incrby
@@ -48,7 +48,7 @@ abstract class Table
     }
 
     /**
-     * ԭ���Լ�������
+     * 原子自减操作。
      * @param string $key
      * @param string $column
      * @param int $incrby
@@ -59,7 +59,7 @@ abstract class Table
     }
 
     /**
-     * ��ȡһ������
+     * 获取一行数据
      * @param string $key
      * @param string|null $field
      * @return array
@@ -70,7 +70,7 @@ abstract class Table
     }
 
     /**
-     * �ж�һ�������Ƿ����
+     * 判断一个数据是否存在
      * @param string $key
      * @return mixed
      */
@@ -80,7 +80,7 @@ abstract class Table
     }
 
     /**
-     * ɾ��һ������
+     * 删除一行数据
      * @param string $key
      * @return mixed
      */
@@ -91,7 +91,7 @@ abstract class Table
 
 
     /**
-     * ͳ�Ʊ������
+     * 统计表的行数
      * @param int $mode
      * @return mixed
      */
@@ -101,7 +101,7 @@ abstract class Table
     }
 
     /**
-     * ���������
+     * 销毁这个表
      * @return mixed
      */
     public function destroy()
