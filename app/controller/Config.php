@@ -13,17 +13,17 @@ class Config extends \pms\Controller
      */
     public function acquire($data)
     {
-        output($data);
+        //output($data);
         $name = $data['n'];
         $c = $this->get_data($name);
         if (!$c) {
-            //output('配置不存在', 'error');
+            output('配置不存在', 'error');
             # 配置不存在
             return $this->connect->send_error("配置不存在", $name, 404);
         }
 
         if (!$this->validator($c['secret'], $name, $data['k'])) {
-            //output('秘钥验证不通过', 'error');
+            output('秘钥验证不通过', 'error');
             return $this->connect->send_error('秘钥验证不通过!!', $data, 403);
         }
         unset($c['secret']);
@@ -58,7 +58,7 @@ class Config extends \pms\Controller
     protected function validator($key, $name, $key2)
     {
         $key_new = md5(md5(APP_SECRET_KEY) . md5($key) . md5($name));
-        output([$key_new, $key2], 'hash_equals');
+        //output([$key_new, $key2], 'hash_equals');
         if (\hash_equals($key_new, $key2)) {
             return true;
         }
