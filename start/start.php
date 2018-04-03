@@ -1,7 +1,9 @@
 <?php
 echo "开始主程序! \n";
 define("SERVICE_NAME", "CONFIG");# 设置服务名字
-require 'vendor/autoload.php';
+define('ROOT_DIR', dirname(__DIR__));
+require ROOT_DIR . '/vendor/autoload.php';
+require ROOT_DIR . '/vendor/dongasai/pms_frame/index.php';
 # 进行一些项目配置
 define('APP_SECRET_KEY', get_env("APP_SECRET_KEY"));
 define('REGISTER_SECRET_KEY', get_env("REGISTER_SECRET_KEY"));
