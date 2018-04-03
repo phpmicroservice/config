@@ -4,11 +4,27 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit00383135200a85999810eb4345f8a4a4
+class ComposerStaticInit2ff2f8a453cc503ab21dadd0c146c88e
 {
+    public static $prefixLengthsPsr4 = array (
+        'p' => 
+        array (
+            'pms\\' => 4,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'pms\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dongasai/pms_frame',
+        ),
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit2ff2f8a453cc503ab21dadd0c146c88e::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit2ff2f8a453cc503ab21dadd0c146c88e::$prefixDirsPsr4;
 
         }, null, ClassLoader::class);
     }

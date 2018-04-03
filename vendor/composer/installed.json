@@ -1,17 +1,17 @@
 [
     {
         "name": "dongasai/pms_frame",
-        "version": "0.0.1",
-        "version_normalized": "0.0.1.0",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
             "url": "https://github.com/phpmicroservice/pms.git",
-            "reference": "0fe4ea76b74eccd6ba3272bbf89577b3ae918d21"
+            "reference": "99d843c58b5fcd51eb51f6bbd4b91507e4fccbbb"
         },
         "dist": {
             "type": "zip",
-            "url": "https://files.phpcomposer.com/files/phpmicroservice/pms/0fe4ea76b74eccd6ba3272bbf89577b3ae918d21.zip",
-            "reference": "0fe4ea76b74eccd6ba3272bbf89577b3ae918d21",
+            "url": "https://files.phpcomposer.com/files/phpmicroservice/pms/99d843c58b5fcd51eb51f6bbd4b91507e4fccbbb.zip",
+            "reference": "99d843c58b5fcd51eb51f6bbd4b91507e4fccbbb",
             "shasum": ""
         },
         "require": {
@@ -22,9 +22,14 @@
         "require-dev": {
             "eaglewu/swoole-ide-helper": "dev-master"
         },
-        "time": "2018-04-03T07:00:25+00:00",
+        "time": "2018-04-03T09:32:23+00:00",
         "type": "library",
         "installation-source": "source",
+        "autoload": {
+            "psr-4": {
+                "pms\\": ""
+            }
+        },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
             "MIT"
