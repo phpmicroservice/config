@@ -6,5 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'pms\\' => array($vendorDir . '/dongasai/pms_frame'),
+    'pms\\' => array($vendorDir . '/phpmicroservice/pms-frame'),
+    'funch\\' => array($vendorDir . '/phpmicroservice/funch/src'),
 );

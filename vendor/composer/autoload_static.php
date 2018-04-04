@@ -7,7 +7,7 @@ namespace Composer\Autoload;
 class ComposerStaticInit2ff2f8a453cc503ab21dadd0c146c88e
 {
     public static $files = array (
-        '7ed3263fcabc1401e0b89887560ce713' => __DIR__ . '/..' . '/dongasai/pms_frame/index.php',
+        '2aee30e17ff363daa33645b96428ae87' => __DIR__ . '/..' . '/phpmicroservice/pms-frame/index.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -15,12 +15,20 @@ class ComposerStaticInit2ff2f8a453cc503ab21dadd0c146c88e
         array (
             'pms\\' => 4,
         ),
+        'f' => 
+        array (
+            'funch\\' => 6,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
         'pms\\' => 
         array (
-            0 => __DIR__ . '/..' . '/dongasai/pms_frame',
+            0 => __DIR__ . '/..' . '/phpmicroservice/pms-frame',
+        ),
+        'funch\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmicroservice/funch/src',
         ),
     );
 

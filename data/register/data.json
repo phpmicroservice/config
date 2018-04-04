@@ -6,9 +6,9 @@
     "app_mysql_dbname":"dys_register"
   },
   "cache": {
-    "host": "192.168.1.202",
+    "host": "192.168.1.248",
     "port": 6379,
-    "auth": "",
+    "auth": false,
     "persistent": true,
     "prefix": "register_",
     "index": "2"

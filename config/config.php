@@ -13,5 +13,10 @@ return [
     ],
     'config_init' => false,
     'server_reg' => true,
-    'ready'=>false
+    'ready' => false,
+    'codeUpdata' => [
+        '/app/',
+        '/start/',
+        '/tool/'
+    ]
 ];
