@@ -12,7 +12,13 @@
             "type": "zip",
             "url": "https://api.github.com/repos/phpmicroservice/funch/zipball/8d70ac11ad89e2d26107f9d846260b441bf3eeda",
             "reference": "8d70ac11ad89e2d26107f9d846260b441bf3eeda",
-            "shasum": ""
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
         },
         "require": {
             "php": ">7"
@@ -52,13 +58,19 @@
         "source": {
             "type": "git",
             "url": "https://github.com/phpmicroservice/pms.git",
-            "reference": "25d5e2b4136bb214b7ac72c5478ae4455666d419"
+            "reference": "55506ed7779fa4ce3b535a595697282882245440"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/phpmicroservice/pms/zipball/25d5e2b4136bb214b7ac72c5478ae4455666d419",
-            "reference": "25d5e2b4136bb214b7ac72c5478ae4455666d419",
-            "shasum": ""
+            "url": "https://api.github.com/repos/phpmicroservice/pms/zipball/55506ed7779fa4ce3b535a595697282882245440",
+            "reference": "55506ed7779fa4ce3b535a595697282882245440",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
         },
         "require": {
             "ext-phalcon": "3.1.*",
@@ -67,9 +79,9 @@
             "phpmicroservice/funch": "0.*"
         },
         "require-dev": {
-            "eaglewu/swoole-ide-helper": "dev-master"
+            "eaglewu/swoole-ide-helper": "dev-master@dev"
         },
-        "time": "2018-04-04T08:09:43+00:00",
+        "time": "2018-04-04T09:10:56+00:00",
         "type": "project",
         "installation-source": "source",
         "autoload": {

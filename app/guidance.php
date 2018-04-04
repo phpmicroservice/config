@@ -15,6 +15,7 @@ class guidance  extends \Phalcon\Di\Injectable
      */
     public function onWorkerStart(Event $event,\pms\Server $pms_server,\Swoole\Server $server)
     {
+        # 启动后设置项目状态为准备好了
         $this->dConfig->ready=true;
         output(19,'guidance');
     }
