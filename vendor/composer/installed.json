@@ -6,12 +6,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/phpmicroservice/pms.git",
-            "reference": "e00d4324d38337e5b7c21257ae9be7784a27f09c"
+            "reference": "d38acb6136c9a739873680025d747eb7933a960f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://files.phpcomposer.com/files/phpmicroservice/pms/e00d4324d38337e5b7c21257ae9be7784a27f09c.zip",
-            "reference": "e00d4324d38337e5b7c21257ae9be7784a27f09c",
+            "url": "https://files.phpcomposer.com/files/phpmicroservice/pms/d38acb6136c9a739873680025d747eb7933a960f.zip",
+            "reference": "d38acb6136c9a739873680025d747eb7933a960f",
             "shasum": ""
         },
         "require": {
@@ -22,13 +22,16 @@
         "require-dev": {
             "eaglewu/swoole-ide-helper": "dev-master"
         },
-        "time": "2018-04-03T09:52:29+00:00",
+        "time": "2018-04-04T03:08:46+00:00",
         "type": "library",
         "installation-source": "source",
         "autoload": {
             "psr-4": {
                 "pms\\": ""
-            }
+            },
+            "files": [
+                "/index.php"
+            ]
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [

@@ -6,6 +6,10 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit2ff2f8a453cc503ab21dadd0c146c88e
 {
+    public static $files = array (
+        '7ed3263fcabc1401e0b89887560ce713' => __DIR__ . '/..' . '/dongasai/pms_frame/index.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
         'p' => 
         array (
