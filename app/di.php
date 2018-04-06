@@ -16,7 +16,6 @@ $loader = new \Phalcon\Loader();
 $loader->registerNamespaces(
     [
         'app'    => ROOT_DIR . '/./app/',
-        'core'    => ROOT_DIR . '/./core/',
         'tool'    => ROOT_DIR . '/./tool/',
     ]
 );
