@@ -22,8 +22,8 @@ class Config extends \pms\Controller
             return $this->connect->send_error("配置不存在", $name, 404);
         }
 
-        if (!$this->validator($c['secret'], $name, $data['k'])) {
-            output('秘钥验证不通过', 'error');
+        if (!$this->validator($c['secret'], $data)) {
+
             return $this->connect->send_error('秘钥验证不通过!!', $data, 403);
         }
         unset($c['secret']);
@@ -55,13 +55,14 @@ class Config extends \pms\Controller
      * @param $name 要获取的名字
      * @param $key2 传过来的key
      */
-    protected function validator($key, $name, $key2)
+    protected function validator($data_secret, $data)
     {
-        $key_new = md5(md5(APP_SECRET_KEY) . md5($key) . md5($name));
+        $key_new = md5(md5(APP_SECRET_KEY) . md5($data_secret) . md5($data['n']));
         //output([$key_new, $key2], 'hash_equals');
-        if (\hash_equals($key_new, $key2)) {
+        if (\hash_equals($key_new, $data['k'])) {
             return true;
         }
+        output(['秘钥验证不通过',$data_secret,$data,$key_new,APP_SECRET_KEY], 'error');
         return false;
     }
 
