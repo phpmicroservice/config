@@ -1,0 +1,17 @@
+{
+  "database":{
+    "app_mysql_host":"192.168.1.1",
+    "app_mysql_username":"root",
+    "app_mysql_password":"root",
+    "app_mysql_dbname":"pms_proxy"
+  },
+  "cache": {
+    "host": "192.168.1.1",
+    "port": 6379,
+    "auth": false,
+    "persistent": true,
+    "prefix": "proxy_",
+    "index": "3"
+  },
+  "secret": "123456"
+}

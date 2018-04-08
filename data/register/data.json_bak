@@ -1,0 +1,17 @@
+{
+  "database":{
+    "app_mysql_host":"192.168.1.1",
+    "app_mysql_username":"root",
+    "app_mysql_password":"root",
+    "app_mysql_dbname":"pms_register"
+  },
+  "cache": {
+    "host": "192.168.1.1",
+    "port": 6379,
+    "auth": false,
+    "persistent": true,
+    "prefix": "register_",
+    "index": "2"
+  },
+  "secret": "123456"
+}
