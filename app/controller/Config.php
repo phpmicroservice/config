@@ -3,10 +3,15 @@
 namespace app\controller;
 /**
  * 配置处理
+ *
  */
 class Config extends \pms\Controller
 {
 
+    public function demo()
+    {
+        $this->connect->send_succee([mt_rand(100, 99999999)]);
+    }
     /**
      * 配置获取
      * @param $data
